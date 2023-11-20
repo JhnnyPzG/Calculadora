@@ -1,0 +1,236 @@
+Ceros:
+
+def Biseccion(f, a, b, tol):
+    if (f(a) * f(b) > 0):
+        print('La funcion no cumple el teorema en el intervalo, busque otro itervalo')
+    else:
+        acum = 0
+        data = []
+        while(np.abs(b - a) > tol):
+            c = (a + b) / 2
+            data.append([a, b, c, f(a), f(c), np.abs(b - a)])
+            if (f(a) * f(c) < 0):
+                b = c
+            else:
+                a = c
+            acum += 1
+    return c, data
+
+def falsa_pos(f, a, b, tol):
+    if (f(a) * f(b) > 0):
+        print('La funcion no cumple el teorema en el intervalo, busque otro itervalo')
+    else:
+        D = []
+        c = a - ((f(a) * (a - b)) / (f(a) - f(b)))
+        D.append([a, b, c, f(a), f(c), "+" if f(a) * f(c) > 0 else "-", np.abs(f(c))])
+        while(np.abs(f(c)) > tol):
+            c = a - ((f(a) * (a - b)) / (f(a) - f(b)))
+            if (f(a) * f(c) < 0):
+                b = c
+            else:
+                a = c
+            D.append([a, b, c, f(a), f(c), "+" if f(a) * f(c) > 0 else "-", np.abs(f(c))])
+        print('La raiz de la función por falsa Posición es:', c, 'y su valor es:', f(c))
+    return c, D
+
+def Newton(f, x0, tol):
+    x = sp.symbols('x')
+    df = sp.diff(f, x)
+    tabla = []
+    NewT = x - f/df
+    NewT = sp.lambdify(x, NewT)
+    x1 = x0 - f.subs(x, x0)/df.subs(x, x0)
+    i = 1
+    tabla.append([i, x1])
+    while sp.Abs(x1 - x0) > tol:
+        x0 = x1
+        x1 = x0 - f.subs(x, x0)/df.subs(x, x0)
+        i = i + 1
+        tabla.append([i, x1])
+
+    print("La raíz es: ", x1, "La cantidad de iteraciones es: ", i)
+    return tabla
+
+def Secante(f,x0,x1,tol):
+    i=1
+    tabla=[]
+    x2 = x1 - f(x1) * (x1-x0) / (f(x1) - f(x0))
+    tabla.append([i,x2])
+    while(np.abs(x2-x1)>tol):
+        x0= x1
+        x1= x2
+        x2= x1 - f(x1) * (x1-x0) / (f(x1) - f(x0))
+        i=i+1
+        tabla.append([i, x2])
+            
+    print('Iteraciones:',i, ' X:', x2)
+    return tabla
+
+
+Interpolacion:
+
+def lagrange(xdata,ydata):
+    N=len(xdata)
+    P=0
+    for i in range(N):
+        T=1
+        for j in range(N):
+            if j!=i:
+                T=T*(X-xdata[j])/(xdata[i]-xdata[j])
+        P=P+T*ydata[i]
+    print('El polinomio es P(X):',P)
+    return sp.lambdify(X,P)
+
+MC(x,y)
+
+def MC (x, y):   #MINIMOCUADRADOS
+    m=len(x)
+    sx=sum(x)
+    sy=sum(y)
+    sx2=sx**2 #suma de los x elevado al cuadrado 
+    sxy=np.sum(x*y)
+    scx=np.sum(x**2) #eleva cada uno y despues hace la suma     
+    a0= (sy*scx-sx*sxy)/(m*scx-sx2)
+    print('el resultado de a0: ', a0)
+    a1= (m*sxy-sx*sy)/(m*scx-sx2)
+    print('el resultado de a1: ', a1)
+
+    return a0,a1
+
+def p_simple(xdata, ydata):
+    N=len(xdata)
+    M=np.zeros([N,N])
+    P=0
+    for i in range(N):
+        M[i,0]=1
+        for j in range(1,N):
+            M[i,j]=M[i,j-1]*xdata[i]
+    ai=np.linalg.solve(M,ydata)
+    for i in range(N):
+        P=P+ai[i]X*i
+    print('El polinomio interpolante es: P(X)=',P)
+    return sp.lambdify(X,P)
+
+
+EDO1:
+
+def Euler(f,a,b,h,co):
+    n=int((b-a)/h)
+    t=np.linspace(a,b,n+1)
+    yeu=[co]
+    for i in range(n):
+        yeu.append(yeu[i]+h*f(t[i],yeu[i]))
+    return t,yeu
+
+def Runge4(f,a,b,h,co):
+    n = int((b-a)/h)
+    t = np.linspace(a,b,n+1)
+    yk = [co]
+    for i in range(n):
+        k1 = h*f(t[i],yk[i])
+        k2 = h*f(t[i]+h/2,yk[i]+1/2*k1)
+        k3 = h*f(t[i]+h/2,yk[i]+1/2*k2)
+        k4 = h*f(t[i+1],yk[i]+k3)
+        yk.append(yk[i]+1/6*(k1+2*k2+2*k3+k4))
+    return t,yk
+
+
+EDO2:
+
+def euler_sis(f,a,b,h,co):
+    n=int((b-a)/h)
+    t=np.linspace(a,b,n+1)
+    S=[co]
+    for i in range(n):
+        S.append(S[i]+h*f(t[i],S[i]))      
+    return t,np.array(S)
+
+def rk4_vec(f,a,b,h,var):
+    n=int((b-a)/h)
+    t=np.linspace(a,b,n+1)
+    w=[]
+    w.append(var)
+    for i in range(0,n):
+        k1=h*f(t[i],w[i])
+        k2=h*f(t[i]+h/2,w[i]+k1/2)
+        k3=h*f(t[i]+h/2,w[i]+k2/2)
+        k4=h*f(t[i+1],w[i]+k3)
+        w.append(w[i]+(1/6)*(k1+2*k2+2*k3+k4))
+    w=np.array(w)
+    return t, w
+
+Integracion: 
+
+def Trapecio_Simple(f,a,b):
+    h=b-a
+    Area=h/2*(f(a)+f(b))
+    return Area
+
+def Numero_intervalo(f,a,b,tol):
+    u=np.linspace(a,b,10000)
+    df=sp.lambdify(x,sp.diff(f,x,2))
+    Max=np.max(np.abs(df(u)))
+    N=((b-a)**3/(12*tol)*Max)**(1/2)
+    return int(np.ceil(N))
+
+def Trapecio_Compuesta(f,a,b,N):
+    h=(b-a)/N
+    acum=0
+    for i in range(1,N):
+        xi=a+i*h
+        acum=acum+f(xi)
+    Area=h/2*(f(a)+2*acum+f(b))
+    return Area
+
+def Trapecio_data(xi,yi):
+    N=len(xi)
+    h=(xi[1]-xi[0])
+    acum=0
+    for i in range(1,N-1):
+        acum=acum+yi[i]
+    Area=h/2*(yi[0]+2*acum+yi[N-1])
+    return Area
+
+
+def Simpson13_Simple(f,a,b):
+    h=(b-a)/2
+    Area=h/3*(f(a)+4*f(a+h)+f(b))
+    return Area
+
+def Simpson13_data(xi, yi):
+    N = len(xi)
+    h = (xi[1] - xi[0])
+    acum1 = 0
+    acum2 = 0
+    for i in range(1, N-1):
+        if i%2 == 0:
+            acum2 += yi[i]
+        else:
+            acum1 += yi[i]
+    Area = h/3*(yi[0]+2*acum2+4*acum1+yi[N-1])
+    return Area
+
+
+def Simpson38_Simple(f,a,b):
+    h=(b-a)/3
+    Area=3*h/8*(f(a)+3*f(a+h)+3*f(a+2*h)+f(b))
+    return Area
+
+def Simpson38_data(xi, yi):
+    N = len(xi)
+    h = (xi[1] - xi[0])
+    acum1 = 0
+    acum2 = 0
+    acum3 = 0
+    if (N-1)%3 == 0:
+        for i in range(1, N-1):
+            if i%3 == 0:
+                acum3 += yi[i]
+            elif i%3 == 1:
+                acum1 += yi[i]
+            else:
+                acum2 += yi[i]
+        Area = 3*h/8*(yi[0]+3*acum1+3*acum2+2*acum3+yi[N-1])
+        return Area
+    else: 
+        print("El numero de puntos debe ser multiplo de 3")
