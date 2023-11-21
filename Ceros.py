@@ -130,8 +130,18 @@ class AplicacionBuscadorRaiz:
         messagebox.showinfo("Resultado", mensaje)
 
     def plot_function_and_root(self, funcion, intervalo, raiz, x):
+        # Check if the interval is valid
+        intervalo_values = intervalo.split(',')
+        if len(intervalo_values) != 2:
+            messagebox.showerror("Error", "Intervalo no válido para graficar.")
+            return
+
         # Crear un array de valores x para la gráfica de la función
-        x_vals = np.linspace(float(intervalo.split(',')[0]), float(intervalo.split(',')[1]), 100)
+        try:
+            x_vals = np.linspace(float(intervalo_values[0]), float(intervalo_values[1]), 100)
+        except ValueError:
+            messagebox.showerror("Error", "Intervalo no válido para graficar.")
+            return
 
         # Evaluar la función simbólica directamente en lugar de usar lambdify
         y_vals = [funcion.subs(x, val) for val in x_vals]
@@ -139,14 +149,17 @@ class AplicacionBuscadorRaiz:
         # Limpiar el gráfico anterior y graficar la función
         self.ax_function.clear()
         self.ax_function.plot(x_vals, y_vals, label=str(funcion))
-        
+
         # Verificar si la raíz es un número antes de evaluarla en la función
         if isinstance(raiz, (int, float)):
             self.ax_function.scatter([raiz], [funcion.subs(x, raiz)], color='red', label='Raíz')
         else:
-            messagebox.showerror("Error", "La raíz no es un número válido.")
+            # Don't plot the root if it's not a valid number
+            self.ax_function.set_title("Gráfico de la Función (Raíz no válida)")
+            self.ax_function.legend()
+            self.canvas_function.draw()
             return
-        
+
         self.ax_function.set_title("Gráfico de la Función")
         self.ax_function.set_xlabel("x")
         self.ax_function.set_ylabel("f(x)")
@@ -154,6 +167,8 @@ class AplicacionBuscadorRaiz:
 
         # Actualizar el gráfico en el widget Tkinter
         self.canvas_function.draw()
+
+
 
 def Biseccion(f, a, b, tol):
     if (f(a) * f(b) > 0):
@@ -203,8 +218,7 @@ def Newton(f, x0, tol):
         i = i + 1
         tabla.append([i, x1])
 
-    print("La raíz es: ", x1, "La cantidad de iteraciones es: ", i)
-    return tabla
+    return x1, tabla
 
 def Secante(f,x0,x1,tol):
     i=1
@@ -219,7 +233,7 @@ def Secante(f,x0,x1,tol):
         tabla.append([i, x2])
             
     print('Iteraciones:',i, ' X:', x2)
-    return tabla
+    return x2, tabla
 
 
 if __name__ == "__main__":
