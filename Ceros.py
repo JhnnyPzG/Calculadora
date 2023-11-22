@@ -6,10 +6,10 @@ import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 
-class AplicacionBuscadorRaiz:
+class Ceros:
     def __init__(self, root):
         self.root = root
-        self.root.title("SOLUCIÓN CEROS")
+        self.root.title("Ceros")
 
         # Entrada de la función
         ttk.Label(root, text="Ingrese la función (use 'x' como variable):").grid(row=0, column=0, padx=10, pady=10)
