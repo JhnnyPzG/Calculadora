@@ -81,7 +81,7 @@ def lagrange(xdata,ydata):
     print('El polinomio es P(X):',P)
     return sp.lambdify(X,P)
 
-MC(x,y)
+#MC(x,y)
 
 def MC (x, y):   #MINIMOCUADRADOS
     m=len(x)

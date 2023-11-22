@@ -9,7 +9,7 @@ from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 class AplicacionBuscadorRaiz:
     def __init__(self, root):
         self.root = root
-        self.root.title("Ceros")
+        self.root.title("SOLUCIÓN CEROS")
 
         # Entrada de la función
         ttk.Label(root, text="Ingrese la función (use 'x' como variable):").grid(row=0, column=0, padx=10, pady=10)
@@ -106,9 +106,6 @@ class AplicacionBuscadorRaiz:
         # Mostrar los resultados y graficar la convergencia
         self.mostrar_resultados(raiz, iteraciones)
         self.plot_function_and_root(f, input_value, eval(str(raiz)), x)
-
-
-
 
     def mostrar_resultados(self, raiz, iteraciones):
         # Limpiar resultados anteriores
