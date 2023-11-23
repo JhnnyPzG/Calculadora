@@ -8,11 +8,15 @@ class MenuPrincipal:
         self.root = root
         self.root.title("Menú Principal")
 
-        self.root.geometry("900x900")
+        self.root.configure(bg='Lavender')
+        self.root.geometry("400x400")
 
         # Crear botones para acceder a las aplicaciones
         ttk.Button(root, text="Ceros", command=self.abrir_aplicacion_buscador_raiz).pack(pady=20)
         ttk.Button(root, text="Interpolación", command=self.abrir_aplicacion_interpolacion).pack(pady=20)
+        ttk.Button(root, text="Integración", command=self.abrir_aplicacion_interpolacion).pack(pady=20)
+        ttk.Button(root, text="Ecuaciones diferenciales grado 1", command=self.abrir_aplicacion_interpolacion).pack(pady=20)
+        ttk.Button(root, text="Ecuaciones diferenciales grado 2", command=self.abrir_aplicacion_interpolacion).pack(pady=20)
 
     def abrir_aplicacion_buscador_raiz(self):
         ventana_buscador_raiz = tk.Toplevel(self.root)
