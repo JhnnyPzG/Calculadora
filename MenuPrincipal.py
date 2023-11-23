@@ -1,10 +1,10 @@
 import tkinter as tk
 from tkinter import ttk
-from Ceros import Ceros
-from Interpolacion import main as main_interpolacion
+from Ceros import AplicacionBuscadorRaiz
+from Interpolacion import AplicacionInterpolacion
 from Integracion import GUI
-from Edo1 import solve_and_plot_ode
-from Edo2 import ODE_solver_GUI_2
+from Edo1 import AplicacionEDO1
+from Edo2 import main_EDO2
 
 class MenuPrincipal:
     def __init__(self, root):
@@ -36,19 +36,21 @@ class MenuPrincipal:
 
     def abrir_aplicacion_buscador_raiz(self):
         ventana_buscador_raiz = tk.Toplevel(self.root)
-        aplicacion_buscador_raiz = Ceros(ventana_buscador_raiz)
+        aplicacion_buscador_raiz = AplicacionBuscadorRaiz(ventana_buscador_raiz)
 
     def abrir_aplicacion_interpolacion(self):
-        main_interpolacion()
+        app_interpolacion = AplicacionInterpolacion()
+        app_interpolacion.run()
 
     def abrir_aplicacion_integracion(self):
         GUI()
 
     def abrir_aplicacion_edo1(self):
-        solve_and_plot_ode()
+        ventana_edo1 = tk.Toplevel(self.root)
+        aplicacion_edo1 = AplicacionEDO1(ventana_edo1)
 
     def abrir_aplicacion_edo2(self):
-        ODE_solver_GUI_2()
+        main_EDO2()
 
 if __name__ == "__main__":
     root = tk.Tk()
