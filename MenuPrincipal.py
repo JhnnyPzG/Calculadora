@@ -31,7 +31,8 @@ class MenuPrincipal:
         ]
 
         for text, command in buttons:
-            ttk.Button(button_container, text=text, command=command).pack(fill='x', pady=5)
+            # Agregar cursor "hand2" a los botones
+            ttk.Button(button_container, text=text, command=command, cursor="heart").pack(fill='x', pady=5) #agg cursor heart
 
     def abrir_aplicacion_buscador_raiz(self):
         ventana_buscador_raiz = tk.Toplevel(self.root)
@@ -42,6 +43,7 @@ class MenuPrincipal:
 
     def abrir_aplicacion_integracion(self):
         GUI()
+
     def abrir_aplicacion_edo1(self):
         solve_and_plot_ode()
 
