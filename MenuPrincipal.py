@@ -2,6 +2,9 @@ import tkinter as tk
 from tkinter import ttk
 from Ceros import Ceros
 from Interpolacion import main as main_interpolacion
+from Integracion import GUI
+from Edo1 import solve_and_plot_ode
+from Edo2 import ODE_solver_GUI_2
 
 class MenuPrincipal:
     def __init__(self, root):
@@ -23,8 +26,8 @@ class MenuPrincipal:
             ("Ceros", self.abrir_aplicacion_buscador_raiz),
             ("Interpolación", self.abrir_aplicacion_interpolacion),
             ("Integración", self.abrir_aplicacion_integracion),
-            ("Ecuaciones diferenciales 1", self.abrir_aplicacion_interpolacion),
-            ("Ecuaciones diferenciales 2", self.abrir_aplicacion_interpolacion)
+            ("Ecuaciones diferenciales 1", self.abrir_aplicacion_edo1),
+            ("Ecuaciones diferenciales 2", self.abrir_aplicacion_edo2)
         ]
 
         for text, command in buttons:
@@ -32,22 +35,18 @@ class MenuPrincipal:
 
     def abrir_aplicacion_buscador_raiz(self):
         ventana_buscador_raiz = tk.Toplevel(self.root)
-        ventana_buscador_raiz.title("Ventana Ceros")  # Puedes personalizar el título
-        ventana_buscador_raiz.geometry("300x300")  # Puedes ajustar el tamaño según tus necesidades
-        ventana_buscador_raiz.configure(borderwidth=5)  # Ajusta el grosor del borde según tus preferencias
-
         aplicacion_buscador_raiz = Ceros(ventana_buscador_raiz)
 
     def abrir_aplicacion_interpolacion(self):
         main_interpolacion()
 
     def abrir_aplicacion_integracion(self):
-        ventana_integracion = tk.Toplevel(self.root)
-        ventana_integracion.title("Ventana de Integración")  
-        ventana_integracion.geometry("800x400")  
+        GUI()
+    def abrir_aplicacion_edo1(self):
+        solve_and_plot_ode()
 
-        aplicacion_buscador_integracion = (ventana_integracion)
-    
+    def abrir_aplicacion_edo2(self):
+        ODE_solver_GUI_2()
 
 if __name__ == "__main__":
     root = tk.Tk()
