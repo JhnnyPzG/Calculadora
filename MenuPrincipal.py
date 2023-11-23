@@ -23,8 +23,8 @@ class MenuPrincipal:
             ("Ceros", self.abrir_aplicacion_buscador_raiz),
             ("Interpolación", self.abrir_aplicacion_interpolacion),
             ("Integración", self.abrir_aplicacion_integracion),
-            ("Ecuaciones diferenciales grado 1", self.abrir_aplicacion_interpolacion),
-            ("Ecuaciones diferenciales grado 2", self.abrir_aplicacion_interpolacion)
+            ("Ecuaciones diferenciales 1", self.abrir_aplicacion_interpolacion),
+            ("Ecuaciones diferenciales 2", self.abrir_aplicacion_interpolacion)
         ]
 
         for text, command in buttons:
