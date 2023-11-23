@@ -1,8 +1,8 @@
 import tkinter as tk
-from tkinter import ttk
-from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
-import matplotlib.pyplot as plt
+from tkinter import Label, Entry, Button, ttk, Text, Scrollbar
 import numpy as np
+import matplotlib.pyplot as plt
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 
 def euler_sis(f, a, b, h, co):
     n = int((b - a) / h)
@@ -25,98 +25,90 @@ def rk4_vec(f, a, b, h, var):
     w = np.array(w)
     return t, w
 
-def plot_graph(f, Y, a, b, h, co, Y_exact):
+def plot_results():
+    # Obtener valores de la interfaz gráfica
+    a_val = float(eval(a_entry.get()))
+    b_val = float(eval(b_entry.get()))
+    h_val = float(eval(h_entry.get()))
+    co_val = eval(co_entry.get())
+    var_val = eval(var_entry.get())
     method = method_var.get()
 
+    # Calcular soluciones utilizando el método seleccionado
     if method == "Euler":
-        t, yeu = euler_sis(f, a, b, h, co)
+        t, sol = euler_sis(f, a_val, b_val, h_val, co_val)
     elif method == "Runge-Kutta":
-        t, yeu = rk4_vec(f, a, b, h, co)
+        t, sol = rk4_vec(f, a_val, b_val, h_val, var_val)
+    else:
+        raise ValueError("Método no reconocido")
 
-    ax.clear()
-    ax.plot(t, yeu[:, 0], 'md', label=f'{method} Aproximada (f)')
-    ax.plot(t, Y(t), 'b', label=f'{method} Exacta (Y)')
+    # Crear una nueva figura
+    fig, ax = plt.subplots()
+    ax.plot(t, sol)
+    ax.set_xlabel('Tiempo')
+    ax.set_ylabel('Solución')
+    ax.set_title(f'Resultados usando {method}')
 
-    ax.set_xlabel('t')
-    ax.set_ylabel('Y(t)')
-    ax.legend()
-    ax.grid(True)
-    ax.set_title('Gráfica de la Solución')
-    canvas.draw()
-
-    result_label.config(text=f'Tiempo: {t}\nSolución Aproximada: {t, yeu}\nSolución Exacta: {t, Y(t)}')
-
-def clear_data():
-    f_entry.delete(0, tk.END)
-    Y_entry.delete(0, tk.END)
-    a_entry.delete(0, tk.END)
-    b_entry.delete(0, tk.END)
-    h_entry.delete(0, tk.END)
-    co_entry.delete(0, tk.END)
-    result_label.config(text="")
-    ax.clear()
-    canvas.draw()
-
-def update_method(*args):
-    ax.clear()
-    canvas.draw()
-
-def ODE_solver_GUI_2():
-    root = tk.Tk()
-    root.title("INTERFAZ PARA EDO 2")
-
-    global method_var
-    method_var = tk.StringVar()
-    method_var.set("Euler")
-    method_var.trace_add('write', update_method)
-
-    method_label = ttk.Label(root, text="Método:")
-    method_combobox = ttk.Combobox(root, textvariable=method_var, values=["Euler", "Runge-Kutta"])
-    f_label = ttk.Label(root, text="Función f(t, y):")
-    f_entry = ttk.Entry(root)
-    Y_label = ttk.Label(root, text="Función Y(t):")
-    Y_entry = ttk.Entry(root)
-    a_label = ttk.Label(root, text="a:")
-    a_entry = ttk.Entry(root)
-    b_label = ttk.Label(root, text="b:")
-    b_entry = ttk.Entry(root)
-    h_label = ttk.Label(root, text="h:")
-    h_entry = ttk.Entry(root)
-    co_label = ttk.Label(root, text="Condición Inicial:")
-    co_entry = ttk.Entry(root)
-    calculate_button = ttk.Button(root, text="Calcular", command=lambda: plot_graph(
-        lambda t, y: eval(f_entry.get()),
-        lambda t: eval(Y_entry.get()),
-        float(a_entry.get()), float(b_entry.get()), float(h_entry.get()), float(co_entry.get()), lambda t: 0
-    ))
-
-    clear_button = ttk.Button(root, text="Borrar Datos", command=clear_data)
-
-    result_label = ttk.Label(root, text="")
-    result_label.grid(row=8, column=0, columnspan=3, pady=10)
-
-    method_label.grid(row=0, column=0, padx=5, pady=5, sticky="E")
-    method_combobox.grid(row=0, column=1, padx=5, pady=5, sticky="W")
-    f_label.grid(row=1, column=0, padx=5, pady=5, sticky="E")
-    f_entry.grid(row=1, column=1, padx=5, pady=5, sticky="W")
-    Y_label.grid(row=2, column=0, padx=5, pady=5, sticky="E")
-    Y_entry.grid(row=2, column=1, padx=5, pady=5, sticky="W")
-    a_label.grid(row=3, column=0, padx=5, pady=5, sticky="E")
-    a_entry.grid(row=3, column=1, padx=5, pady=5, sticky="W")
-    b_label.grid(row=4, column=0, padx=5, pady=5, sticky="E")
-    b_entry.grid(row=4, column=1, padx=5, pady=5, sticky="W")
-    h_label.grid(row=5, column=0, padx=5, pady=5, sticky="E")
-    h_entry.grid(row=5, column=1, padx=5, pady=5, sticky="W")
-    co_label.grid(row=6, column=0, padx=5, pady=5, sticky="E")
-    co_entry.grid(row=6, column=1, padx=5, pady=5, sticky="W")
-    calculate_button.grid(row=7, columnspan=2, pady=10)
-    clear_button.grid(row=8, column=2, pady=10)
-
-    fig, ax = plt.subplots(figsize=(8, 6))
-    canvas = FigureCanvasTkAgg(fig, master=root)
+    # Mostrar la nueva gráfica en la interfaz
+    canvas = FigureCanvasTkAgg(fig, master=window)
     canvas_widget = canvas.get_tk_widget()
-    canvas_widget.grid(row=0, column=2, rowspan=8, padx=10, pady=10)
+    canvas_widget.grid(row=0, column=2, rowspan=10)
 
-    root.protocol("WM_DELETE_WINDOW", root.destroy)
-    root.mainloop()
+    # Destruir el widget de la gráfica anterior si existe
+    if hasattr(plot_results, 'canvas_widget'):
+        plot_results.canvas_widget.destroy()
 
+    # Almacenar el widget de la gráfica actual para poder destruirlo la próxima vez
+    plot_results.canvas_widget = canvas_widget
+
+    # Mostrar soluciones numéricas en el área de texto
+    results_text.config(state=tk.NORMAL)
+    results_text.delete(1.0, tk.END)
+    results_text.insert(tk.END, f"Tiempo: {t}\n\nSoluciones:\n{sol}")
+    results_text.config(state=tk.DISABLED)
+
+# Función de sistema de ecuaciones diferenciales de ejemplo
+def f(t, y):
+    return y  # Puedes cambiar esta función según tus necesidades
+
+# Crear la interfaz gráfica
+window = tk.Tk()
+window.title("Interfaz Gráfica de Ecuaciones Diferenciales")
+
+# Etiquetas y campos de entrada
+Label(window, text="Valor inicial (a):").grid(row=0, column=0)
+a_entry = Entry(window)
+a_entry.grid(row=0, column=1)
+
+Label(window, text="Valor final (b):").grid(row=1, column=0)
+b_entry = Entry(window)
+b_entry.grid(row=1, column=1)
+
+Label(window, text="Tamaño del paso (h):").grid(row=2, column=0)
+h_entry = Entry(window)
+h_entry.grid(row=2, column=1)
+
+Label(window, text="Condición inicial (co):").grid(row=3, column=0)
+co_entry = Entry(window)
+co_entry.grid(row=3, column=1)
+
+Label(window, text="Condición inicial para RK4 (var):").grid(row=4, column=0)
+var_entry = Entry(window)
+var_entry.grid(row=4, column=1)
+
+# Lista desplegable para seleccionar el método
+Label(window, text="Método de resolución:").grid(row=5, column=0)
+methods = ["Euler", "Runge-Kutta"]
+method_var = tk.StringVar()
+method_var.set(methods[0])
+method_dropdown = ttk.Combobox(window, textvariable=method_var, values=methods)
+method_dropdown.grid(row=5, column=1)
+
+# Área de texto para mostrar soluciones numéricas
+results_text = Text(window, height=10, width=50, state=tk.DISABLED)
+results_text.grid(row=6, column=0, columnspan=2, pady=10)
+
+# Botón para calcular y graficar resultados
+Button(window, text="Calcular y Graficar", command=plot_results).grid(row=7, column=0, columnspan=2)
+
+window.mainloop()
