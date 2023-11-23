@@ -47,8 +47,8 @@ def sims38(f, a, b, n):
 class GUI(tk.Tk):
     def __init__(self):
         super().__init__()
-        self.title("Calculadora de Integración")
-        self.geometry("800x400")
+        self.title("INTERFAZ PARA INTEGRACIÓN")
+        self.geometry("800x450")
 
         self.label_func = ttk.Label(self, text="Ingrese la función (utilice 'np.' para funciones de NumPy):")
         self.label_func.grid(row=0, column=0, columnspan=2, padx=10, pady=5)

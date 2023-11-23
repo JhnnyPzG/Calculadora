@@ -7,7 +7,7 @@ import numpy as np
 class AplicacionEDO1:
     def __init__(self, root):
         self.root = root
-        self.root.title("INTERFAZ PARA EDO 1")
+        self.root.title("INTERFAZ PARA ECUACIONES DIFERENCIALES 1")
 
         self.method_var = tk.StringVar()
         self.method_var.set("Euler")

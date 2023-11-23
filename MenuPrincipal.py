@@ -9,7 +9,7 @@ from Edo2 import main_EDO2
 class MenuPrincipal:
     def __init__(self, root):
         self.root = root
-        self.root.title("Menú Principal")
+        self.root.title("MENÚ PRINCIPAL")
         self.root.configure(bg='sky blue')
         self.root.geometry("400x400")
         self.root.configure(borderwidth=5)  # Ajusta el grosor del borde de la ventana principal

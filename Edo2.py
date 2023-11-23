@@ -74,7 +74,7 @@ def main_EDO2():
 
     # Crear la interfaz gráfica
     window = tk.Tk()
-    window.title("Interfaz Gráfica de Ecuaciones Diferenciales")
+    window.title("INTERFAZ PARA ECUACIONES DIFERENCIALES 2")
 
     # Etiquetas y campos de entrada
     Label(window, text="Valor inicial (a):").grid(row=0, column=0)

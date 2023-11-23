@@ -9,7 +9,7 @@ from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 class AplicacionBuscadorRaiz:
     def __init__(self, root):
         self.root = root
-        self.root.title("CEROS")
+        self.root.title("INTERFAZ PARA CEROS")
 
         # Entrada de la función
         ttk.Label(root, text="Ingrese la función (use 'x' como variable):").grid(row=0, column=0, padx=10, pady=10)
