@@ -1,6 +1,8 @@
 import tkinter as tk
 from tkinter import ttk, messagebox
 import numpy as np
+import matplotlib.pyplot as plt
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 
 def Trapecio(f, a, b, n):
     h = (b - a) / n
@@ -20,6 +22,7 @@ def sims13(f, a, b, n):
                 sum_par = f(a + i * h)
             else:
                 sum_imp = f(a + i * h)
+
         Int = (h / 3) * (f(a) + 4 * sum_imp + 2 * sum_par + f(b))
         return Int
     else:
@@ -35,16 +38,17 @@ def sims38(f, a, b, n):
                 sum_mult3 = f(a + i * h)
             else:
                 sum_n = f(a + i * h)
+
         Int = (3 * h / 8) * (f(a) + 3 * sum_n + 2 * sum_mult3 + f(b))
         return Int
     else:
         raise ValueError('No se puede calcular la integral por este método. ¡n debe ser un múltiplo de 3!')
 
-class Integracion(tk.Tk):
+class GUI(tk.Tk):
     def __init__(self):
         super().__init__()
-        self.title("INTERFAZ PARA INTEGRACIÓN")
-        self.geometry("370x300")
+        self.title("Calculadora de Integración")
+        self.geometry("800x400")
 
         self.label_func = ttk.Label(self, text="Ingrese la función (utilice 'np.' para funciones de NumPy):")
         self.label_func.grid(row=0, column=0, columnspan=2, padx=10, pady=5)
@@ -82,6 +86,14 @@ class Integracion(tk.Tk):
         self.button_calculate = ttk.Button(self, text="Calcular", command=self.calculate_integral)
         self.button_calculate.grid(row=8, column=0, columnspan=2, pady=10)
 
+        # Configurar el gráfico
+        self.figure, self.ax = plt.subplots(figsize=(4, 4), dpi=100)
+        self.ax.set_facecolor('#f0f0f0')  # Color de fondo
+        self.ax.grid(True, linestyle='--', alpha=0.7)
+        self.canvas = FigureCanvasTkAgg(self.figure, master=self)
+        self.canvas_widget = self.canvas.get_tk_widget()
+        self.canvas_widget.grid(row=0, column=2, rowspan=9, padx=10, pady=10)
+
     def get_values(self):
         try:
             func_str = self.entry_func.get()
@@ -100,26 +112,39 @@ class Integracion(tk.Tk):
             func_str, a, b, n, method = values
             try:
                 f = lambda x: eval(func_str, {"np": np}, {"x": x})
-                
+
+                # Calcular integral
                 if method == "Trapecio":
                     result = Trapecio(f, a, b, n)
-                    
                 elif method == "Simpson 1/3":
                     result = sims13(f, a, b, n)
-                        
                 elif method == "Simpson 3/8":
                     result = sims38(f, a, b, n)
-                        
                 else:
                     raise ValueError("Método de integración no válido.")
-                
+
+                # Actualizar etiqueta de resultado
                 self.result_label.config(text=f"El resultado de la integral por {method} es: {result}")
-                
+
+                # Graficar la función
+                x_vals = np.linspace(a, b, 100)
+                y_vals = f(x_vals)
+                self.ax.clear()
+                self.ax.plot(x_vals, y_vals, label="Función", color='blue', linewidth=2)
+                self.ax.legend()
+                self.ax.set_xlabel("x")
+                self.ax.set_ylabel("f(x)")
+                self.ax.set_title("Gráfico de la función")
+                self.ax.set_facecolor('#f0f0f0')  # Color de fondo
+                self.ax.grid(True, linestyle='--', alpha=0.7)
+
+                # Actualizar el gráfico en la interfaz
+                self.canvas.draw()
+
             except Exception as e:
                 tk.messagebox.showerror("Error", f"Error al evaluar la función: {e}")
 
 if __name__ == "__main__":
-    app = Integracion()
+    app = GUI()
     app.mainloop()
 
-    
