@@ -1,6 +1,5 @@
 import tkinter as tk
-from tkinter import ttk
-from tkinter import messagebox
+from tkinter import ttk, messagebox
 import sympy as sp
 import numpy as np
 import matplotlib.pyplot as plt
@@ -11,230 +10,220 @@ class AplicacionBuscadorRaiz:
         self.root = root
         self.root.title("INTERFAZ PARA CEROS")
 
-        # Entrada de la función
-        ttk.Label(root, text="Ingrese la función (use 'x' como variable):").grid(row=0, column=0, padx=10, pady=10)
-        self.function_entry = ttk.Entry(root, width=50)
-        self.function_entry.grid(row=0, column=1, padx=10, pady=10)
+        # Marco principal
+        main_frame = ttk.Frame(root, padding=10)
+        main_frame.grid(row=0, column=0)
 
-        # Entrada del valor inicial o intervalo [a, b]
-        ttk.Label(root, text="Ingrese el valor inicial o intervalo [a, b]:").grid(row=1, column=0, padx=10, pady=10)
-        self.initial_value_entry = ttk.Entry(root)
-        self.initial_value_entry.grid(row=1, column=1, padx=10, pady=10)
+        # Sección de entrada
+        entry_section = ttk.LabelFrame(main_frame, text="Entrada", padding=(10, 5))
+        entry_section.grid(row=0, column=0, padx=10, pady=10, sticky="ew")
 
-        # Entrada de la tolerancia
-        ttk.Label(root, text="Ingrese la tolerancia:").grid(row=2, column=0, padx=10, pady=10)
-        self.tolerance_entry = ttk.Entry(root)
-        self.tolerance_entry.grid(row=2, column=1, padx=10, pady=10)
+        ttk.Label(entry_section, text="Función (use 'x' como variable):").grid(row=0, column=0, pady=5, padx=15, sticky="w")
+        self.entrada_funcion = ttk.Entry(entry_section, width=30)
+        self.entrada_funcion.grid(row=1, column=0, pady=5, padx=15, sticky="ew")
 
-        # Selección del método
-        ttk.Label(root, text="Seleccione el método para encontrar la raíz:").grid(row=3, column=0, padx=10, pady=10)
-        self.method_var = tk.StringVar()
-        methods = ["Bisección", "Posición Falsa", "Newton", "Secante"]
-        self.method_combobox = ttk.Combobox(root, values=methods, textvariable=self.method_var)
-        self.method_combobox.grid(row=3, column=1, padx=10, pady=10)
-        self.method_combobox.set(methods[0])
+        ttk.Label(entry_section, text="Intervalo [a, b]:").grid(row=0, column=1, pady=5, padx=15, sticky="w")
+        self.entrada_valor_inicial = ttk.Entry(entry_section, width=30)
+        self.entrada_valor_inicial.grid(row=1, column=1, pady=5, padx=15, sticky="ew")
 
-        # Botón para encontrar la raíz
-        ttk.Button(root, text="Encontrar Raíz", command=self.encontrar_raiz).grid(row=4, column=0, columnspan=2, pady=20)
+        ttk.Label(entry_section, text="Tolerancia:").grid(row=0, column=2, pady=5, padx=15, sticky="w")
+        self.entrada_tolerancia = ttk.Entry(entry_section, width=30)
+        self.entrada_tolerancia.grid(row=1, column=2, pady=5, padx=15, sticky="ew")
 
-        # Resultados y gráficos
-        self.result_label = ttk.Label(root, text="Resultados:")
-        self.result_label.grid(row=5, column=0, columnspan=2, pady=10)
+        ttk.Label(entry_section, text="Método:").grid(row=0, column=3, pady=5, padx=15, sticky="w")
+        self.var_metodo = tk.StringVar()
+        metodos = ["Bisección", "Posición Falsa", "Newton", "Secante"]
+        self.combobox_metodo = ttk.Combobox(entry_section, values=metodos, textvariable=self.var_metodo, width=27)
+        self.combobox_metodo.grid(row=1, column=3, pady=5, padx=15, sticky="ew")
+        self.combobox_metodo.set(metodos[0])
 
-        self.root_table = ttk.Treeview(root, columns=("Valor",), show="headings")
-        self.root_table.heading("Valor", text="Raíz")
-        self.root_table.grid(row=6, column=0, columnspan=2, pady=10)
+        # Botón para encontrar la raíz y graficar el método
+        ttk.Button(main_frame, text="Encontrar Raíz", command=self.encontrar_raiz).grid(row=1, column=0, pady=10, sticky="ew")
 
-        self.iteration_table = ttk.Treeview(root, columns=("Iteración", "Valor"), show="headings")
-        self.iteration_table.heading("Iteración", text="Iteración")
-        self.iteration_table.heading("Valor", text="Valor")
-        self.iteration_table.grid(row=7, column=0, columnspan=2, pady=10)
+        # Sección de resultados y gráficos
+        results_section = ttk.LabelFrame(main_frame, text="Resultados y Gráficos", padding=(10, 5))
+        results_section.grid(row=2, column=0, padx=10, pady=10, sticky="nsew")
+
+        ttk.Label(results_section, text="Resultados:").grid(row=0, column=0, pady=5, sticky="w")
+        self.tabla_raiz = ttk.Treeview(results_section, columns=("Valor",), show="headings", height=1)
+        self.tabla_raiz.heading("Valor", text="Raíz")
+        self.tabla_raiz.grid(row=1, column=0, pady=5, sticky="nsew")
+
+        ttk.Label(results_section, text="Iteraciones:").grid(row=2, column=0, pady=5, sticky="w")
+        self.tabla_iteraciones = ttk.Treeview(results_section, columns=("Iteración", "Valor"), show="headings", height=5)
+        self.tabla_iteraciones.heading("Iteración", text="Iteración")
+        self.tabla_iteraciones.heading("Valor", text="Valor")
+        self.tabla_iteraciones.grid(row=3, column=0, pady=5, sticky="nsew")
 
         # Gráfico de la función
-        self.figure, self.ax_function = plt.subplots(figsize=(6, 4), tight_layout=True)
-        self.ax_function.set_title("Gráfico de la Función")
-        self.ax_function.set_xlabel("x")
-        self.ax_function.set_ylabel("f(x)")
-        self.canvas_function = FigureCanvasTkAgg(self.figure, master=root)
-        self.canvas_function.get_tk_widget().grid(row=0, column=2, rowspan=8, padx=10, pady=10)
+        self.figura, self.ax_funcion = plt.subplots(figsize=(5, 3), tight_layout=True)
+        self.ax_funcion.set_title("Gráfico de la Función")
+        self.ax_funcion.set_xlabel("x")
+        self.ax_funcion.set_ylabel("f(x)")
+        self.canvas_funcion = FigureCanvasTkAgg(self.figura, master=results_section)
+        self.canvas_funcion.get_tk_widget().grid(row=0, column=1, rowspan=4, padx=10, pady=10, sticky="nsew")
+
+        # Configuración del grid para que se expanda con la ventana
+        main_frame.columnconfigure(0, weight=1)
+        main_frame.rowconfigure(2, weight=1)
+        results_section.columnconfigure(1, weight=1)
+        results_section.rowconfigure((1, 3), weight=1)
 
     def encontrar_raiz(self):
-        # Obtener datos ingresados por el usuario
-        funcion_str = self.function_entry.get()
-        input_value = self.initial_value_entry.get()
-        tolerancia = float(self.tolerance_entry.get())
-        metodo_seleccionado = self.method_var.get()
+        funcion_str = self.entrada_funcion.get()
+        valor_inicial = self.entrada_valor_inicial.get()
+        tolerancia = float(self.entrada_tolerancia.get())
+        metodo_seleccionado = self.var_metodo.get()
 
-        # Definir la función simbólicamente
         x = sp.symbols('x')
         try:
-            f = sp.sympify(funcion_str)
+            funcion = sp.sympify(funcion_str)
         except sp.SympifyError:
             messagebox.showerror("Error", "Expresión de función no válida.")
             return
 
-        # Elegir el método y llamar a la función correspondiente
+        intervalo = self.obtener_intervalo(valor_inicial)
+        if intervalo is None:
+            return
+
         if metodo_seleccionado == "Bisección":
-            try:
-                a, b = map(float, input_value.split(','))
-                raiz, iteraciones = Biseccion(lambda x_val: f.subs(x, x_val), a, b, tolerancia)
-            except ValueError:
-                messagebox.showerror("Error", "Intervalo no válido.")
-                return
+            raiz, iteraciones = biseccion(lambda x_val: funcion.subs(x, x_val), *intervalo, tolerancia)
         elif metodo_seleccionado == "Posición Falsa":
-            try:
-                a, b = map(float, input_value.split(','))
-                raiz, iteraciones = falsa_pos(lambda x_val: f.subs(x, x_val), a, b, tolerancia)
-            except ValueError:
-                messagebox.showerror("Error", "Intervalo no válido.")
-                return
+            raiz, iteraciones = posicion_falsa(lambda x_val: funcion.subs(x, x_val), *intervalo, tolerancia)
         elif metodo_seleccionado == "Newton":
             try:
-                valor_inicial = float(input_value)
-                raiz, iteraciones = Newton(f, valor_inicial, tolerancia)
+                valor_inicial = float(valor_inicial[0])
+                raiz, iteraciones = newton(funcion, valor_inicial, tolerancia)
             except ValueError:
                 messagebox.showerror("Error", "Valor inicial no válido.")
                 return
         elif metodo_seleccionado == "Secante":
-            try:
-                a, b = map(float, input_value.split(','))
-                raiz, iteraciones = Secante(lambda x_val: f.subs(x, x_val), a, b, tolerancia)
-            except ValueError:
-                messagebox.showerror("Error", "Intervalo no válido.")
-                return
+            raiz, iteraciones = secante(lambda x_val: funcion.subs(x, x_val), *intervalo, tolerancia)
 
-        # Mostrar los resultados y graficar la convergencia
         self.mostrar_resultados(raiz, iteraciones)
-        self.plot_function_and_root(f, input_value, eval(str(raiz)), x)
-
-
-
+        self.graficar_funcion_y_metodo(funcion, intervalo, raiz, x, metodo_seleccionado)
 
     def mostrar_resultados(self, raiz, iteraciones):
-        # Limpiar resultados anteriores
-        for item in self.root_table.get_children():
-            self.root_table.delete(item)
-        for item in self.iteration_table.get_children():
-            self.iteration_table.delete(item)
+        self.limpiar_tabla(self.tabla_raiz)
+        self.limpiar_tabla(self.tabla_iteraciones)
 
-        # Mostrar el valor de la raíz
-        self.root_table.insert("", "end", values=(raiz,))
+        self.tabla_raiz.insert("", "end", values=(raiz,))
 
-        # Mostrar los valores de las iteraciones
         for i, iteracion in enumerate(iteraciones, 1):
-            self.iteration_table.insert("", "end", values=(i, iteracion[1]))
+            self.tabla_iteraciones.insert("", "end", values=(i, iteracion[1]))
 
-        # Mostrar mensaje con el número de iteraciones
         num_iteraciones = len(iteraciones)
         mensaje = f"Raíz encontrada en {num_iteraciones} iteraciones."
         messagebox.showinfo("Resultado", mensaje)
 
-    def plot_function_and_root(self, funcion, intervalo, raiz, x):
-        # Check if the interval is valid
-        intervalo_values = intervalo.split(',')
-        if len(intervalo_values) != 2:
+    def graficar_funcion_y_metodo(self, funcion, intervalo, raiz, x, metodo):
+        valores_intervalo = list(map(float, intervalo))
+        if len(valores_intervalo) != 2:
             messagebox.showerror("Error", "Intervalo no válido para graficar.")
             return
 
-        # Crear un array de valores x para la gráfica de la función
         try:
-            x_vals = np.linspace(float(intervalo_values[0]), float(intervalo_values[1]), 100)
+            valores_x = np.linspace(float(valores_intervalo[0]), float(valores_intervalo[1]), 100)
         except ValueError:
             messagebox.showerror("Error", "Intervalo no válido para graficar.")
             return
 
-        # Evaluar la función simbólica directamente en lugar de usar lambdify
-        y_vals = [funcion.subs(x, val) for val in x_vals]
+        valores_y = [funcion.subs(x, val) for val in valores_x]
 
-        # Limpiar el gráfico anterior y graficar la función
-        self.ax_function.clear()
-        self.ax_function.plot(x_vals, y_vals, label=str(funcion))
+        self.ax_funcion.clear()
+        self.ax_funcion.plot(valores_x, valores_y, label=str(funcion))
 
-        # Verificar si la raíz es un número antes de evaluarla en la función
         if isinstance(raiz, (int, float)):
-            self.ax_function.scatter([raiz], [funcion.subs(x, raiz)], color='red', label='Raíz')
+            self.ax_funcion.scatter([raiz], [funcion.subs(x, raiz)], color='red', label='Raíz')
         else:
-            # Don't plot the root if it's not a valid number
-            self.ax_function.set_title("Gráfico de la Función (Raíz no válida)")
-            self.ax_function.legend()
-            self.canvas_function.draw()
+            self.ax_funcion.set_title("Gráfico de la Función (Raíz no válida)")
+            self.ax_funcion.legend()
+            self.canvas_funcion.draw()
             return
 
-        self.ax_function.set_title("Gráfico de la Función")
-        self.ax_function.set_xlabel("x")
-        self.ax_function.set_ylabel("f(x)")
-        self.ax_function.legend()
+        self.ax_funcion.set_title(f"Gráfico de la Función y Método: {metodo}")
+        self.ax_funcion.set_xlabel("x")
+        self.ax_funcion.set_ylabel("f(x)")
+        self.ax_funcion.legend()
 
-        # Actualizar el gráfico en el widget Tkinter
-        self.canvas_function.draw()
+        self.canvas_funcion.draw()
 
+    def obtener_intervalo(self, valor_inicial):
+        try:
+            return list(map(float, valor_inicial.split(',')))
+        except ValueError:
+            messagebox.showerror("Error", "Intervalo no válido.")
+            return None
 
+    def limpiar_tabla(self, tabla):
+        for item in tabla.get_children():
+            tabla.delete(item)
 
-def Biseccion(f, a, b, tol):
-    if (f(a) * f(b) > 0):
-        print('La función no cumple el teorema en el intervalo, busque otro intervalo')
+def biseccion(f, a, b, tol):
+    if f(a) * f(b) > 0:
+        messagebox.showerror("Error", "La función no cumple el teorema en el intervalo, busque otro intervalo")
         return None, None
     acum = 0
-    data = []
-    while(np.abs(b - a) > tol):
+    datos = []
+    while np.abs(b - a) > tol:
         c = (a + b) / 2
-        data.append([a, b, c, f(a), f(c), np.abs(b - a)])
-        if (f(a) * f(c) < 0):
+        datos.append([a, b, c, f(a), f(c), np.abs(b - a)])
+        if f(a) * f(c) < 0:
             b = c
         else:
             a = c
         acum += 1
-    return c, data
+    return c, datos
 
-def falsa_pos(f, a, b, tol):
+def posicion_falsa(f, a, b, tol):
     if (f(a) * f(b) > 0):
-        print('La función no cumple el teorema en el intervalo, busque otro intervalo')
-        return None, None
-    D = []
-    c = a - ((f(a) * (a - b)) / (f(a) - f(b)))
-    D.append([a, b, c, f(a), f(c), "+" if f(a) * f(c) > 0 else "-", np.abs(f(c))])
-    while(np.abs(f(c)) > tol):
+        print('La funcion no cumple el teorema en el intervalo, busque otro itervalo')
+    else:
+        D = []
         c = a - ((f(a) * (a - b)) / (f(a) - f(b)))
-        if (f(a) * f(c) < 0):
-            b = c
-        else:
-            a = c
         D.append([a, b, c, f(a), f(c), "+" if f(a) * f(c) > 0 else "-", np.abs(f(c))])
-    print('La raíz de la función por falsa Posición es:', c, 'y su valor es:', f(c))
+        while(np.abs(f(c)) > tol):
+            c = a - ((f(a) * (a - b)) / (f(a) - f(b)))
+            if (f(a) * f(c) < 0):
+                b = c
+            else:
+                a = c
+            D.append([a, b, c, f(a), f(c), "+" if f(a) * f(c) > 0 else "-", np.abs(f(c))])
+        #print('La raiz de la función por falsa Posición es:', c, 'y su valor es:', f(c))
     return c, D
 
-def Newton(f, x0, tol):
+
+def newton(f, x0, tol):
     x = sp.symbols('x')
     df = sp.diff(f, x)
     tabla = []
-    NewT = x - f/df
-    NewT = sp.lambdify(x, NewT)
-    x1 = x0 - f.subs(x, x0)/df.subs(x, x0)
+    x_vals = [x0]
     i = 1
-    tabla.append([i, x1])
-    while sp.Abs(x1 - x0) > tol:
-        x0 = x1
-        x1 = x0 - f.subs(x, x0)/df.subs(x, x0)
-        i = i + 1
+
+    while True:
+        x1 = x_vals[-1] - f.subs(x, x_vals[-1]) / df.subs(x, x_vals[-1])
+        x_vals.append(x1)
         tabla.append([i, x1])
+        if sp.Abs(x1 - x_vals[-2]) <= tol:
+            break
+        i += 1
 
-    return x1, tabla
+    return x_vals, tabla
 
-def Secante(f,x0,x1,tol):
-    i=1
-    tabla=[]
-    x2 = x1 - f(x1) * (x1-x0) / (f(x1) - f(x0))
-    tabla.append([i,x2])
-    while(np.abs(x2-x1)>tol):
-        x0= x1
-        x1= x2
-        x2= x1 - f(x1) * (x1-x0) / (f(x1) - f(x0))
-        i=i+1
+def secante(f, x0, x1, tol):
+    i = 1
+    tabla = []
+    x_vals = [x0, x1]
+
+    while True:
+        x2 = x_vals[-1] - f(x_vals[-1]) * (x_vals[-1] - x_vals[-2]) / (f(x_vals[-1]) - f(x_vals[-2]))
+        x_vals.append(x2)
         tabla.append([i, x2])
-            
-    print('Iteraciones:',i, ' X:', x2)
-    return x2, tabla
+        if np.abs(x2 - x_vals[-2]) <= tol:
+            break
+        i += 1
 
+    return x_vals, tabla
 
 if __name__ == "__main__":
     root = tk.Tk()
