@@ -41,32 +41,32 @@ class AplicacionEDO1:
         self.calculate_button = ttk.Button(self.root, text="Calcular", command=self.calculate)
         self.clear_button = ttk.Button(self.root, text="Borrar Datos", command=self.clear_data)
 
-        self.result_label = ttk.Label(self.root, text="", font=('Arial', 10))  # Fuente más pequeña
-        self.result_label.grid(row=8, column=0, columnspan=3, pady=5)  # Reducción del espacio vertical
+        self.result_label = ttk.Label(self.root, text="", font=('Arial', 10))  
+        self.result_label.grid(row=8, column=0, columnspan=3, pady=5) 
 
         # Configurar el diseño de la cuadrícula
-        self.method_label.grid(row=0, column=0, padx=5, pady=5, sticky="E")  # Reducción del espacio
-        self.method_combobox.grid(row=0, column=1, padx=5, pady=5, sticky="W")  # Reducción del espacio
-        self.f_label.grid(row=1, column=0, padx=5, pady=5, sticky="E")  # Reducción del espacio
-        self.f_entry.grid(row=1, column=1, padx=5, pady=5, sticky="W")  # Reducción del espacio
-        self.Y_label.grid(row=2, column=0, padx=5, pady=5, sticky="E")  # Reducción del espacio
-        self.Y_entry.grid(row=2, column=1, padx=5, pady=5, sticky="W")  # Reducción del espacio
-        self.a_label.grid(row=3, column=0, padx=5, pady=5, sticky="E")  # Reducción del espacio
-        self.a_entry.grid(row=3, column=1, padx=5, pady=5, sticky="W")  # Reducción del espacio
-        self.b_label.grid(row=4, column=0, padx=5, pady=5, sticky="E")  # Reducción del espacio
-        self.b_entry.grid(row=4, column=1, padx=5, pady=5, sticky="W")  # Reducción del espacio
-        self.h_label.grid(row=5, column=0, padx=5, pady=5, sticky="E")  # Reducción del espacio
-        self.h_entry.grid(row=5, column=1, padx=5, pady=5, sticky="W")  # Reducción del espacio
-        self.co_label.grid(row=6, column=0, padx=5, pady=5, sticky="E")  # Reducción del espacio
-        self.co_entry.grid(row=6, column=1, padx=5, pady=5, sticky="W")  # Reducción del espacio
+        self.method_label.grid(row=0, column=0, padx=5, pady=5, sticky="E")  
+        self.method_combobox.grid(row=0, column=1, padx=5, pady=5, sticky="W")  
+        self.f_label.grid(row=1, column=0, padx=5, pady=5, sticky="E")  
+        self.f_entry.grid(row=1, column=1, padx=5, pady=5, sticky="W")  
+        self.Y_label.grid(row=2, column=0, padx=5, pady=5, sticky="E")  
+        self.Y_entry.grid(row=2, column=1, padx=5, pady=5, sticky="W")  
+        self.a_label.grid(row=3, column=0, padx=5, pady=5, sticky="E")  
+        self.a_entry.grid(row=3, column=1, padx=5, pady=5, sticky="W")  
+        self.b_label.grid(row=4, column=0, padx=5, pady=5, sticky="E")  
+        self.b_entry.grid(row=4, column=1, padx=5, pady=5, sticky="W")  
+        self.h_label.grid(row=5, column=0, padx=5, pady=5, sticky="E")  
+        self.h_entry.grid(row=5, column=1, padx=5, pady=5, sticky="W")  
+        self.co_label.grid(row=6, column=0, padx=5, pady=5, sticky="E")  
+        self.co_entry.grid(row=6, column=1, padx=5, pady=5, sticky="W")  
         self.calculate_button.grid(row=7, columnspan=2, pady=10)
-        self.clear_button.grid(row=8, column=2, pady=5)  # Reducción del espacio
+        self.clear_button.grid(row=8, column=2, pady=5)  
 
         # Configuración adicional para el lienzo de matplotlib
-        self.fig, self.ax = plt.subplots(figsize=(6, 4))  # Reducción del tamaño de la figura
+        self.fig, self.ax = plt.subplots(figsize=(6, 4)) 
         self.canvas = FigureCanvasTkAgg(self.fig, master=self.root)
         self.canvas_widget = self.canvas.get_tk_widget()
-        self.canvas_widget.grid(row=0, column=2, rowspan=9, padx=5, pady=5, sticky="nsew")  # Reducción del espacio
+        self.canvas_widget.grid(row=0, column=2, rowspan=9, padx=5, pady=5, sticky="nsew") 
 
         # Configuración de la expansión del grid
         self.root.columnconfigure((0, 1), weight=1)

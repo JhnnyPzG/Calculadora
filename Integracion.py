@@ -4,47 +4,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 
-def Trapecio(f, a, b, n):
-    h = (b - a) / n
-    S = 0
-    for i in range(1, n):
-        S += f(a + i * h)
-    Int = (h / 2) * (f(a) + 2 * S + f(b))
-    return Int
-
-def sims13(f, a, b, n):
-    if (n % 2 == 0):
-        sum_par = 0
-        sum_imp = 0
-        h = (b - a) / n
-        for i in range(1, n):
-            if (i % 2 == 0):
-                sum_par = f(a + i * h)
-            else:
-                sum_imp = f(a + i * h)
-
-        Int = (h / 3) * (f(a) + 4 * sum_imp + 2 * sum_par + f(b))
-        return Int
-    else:
-        raise ValueError('No se puede calcular la integral por este método. ¡n debe ser un número par!')
-
-def sims38(f, a, b, n):
-    if (n % 3 == 0):
-        sum_mult3 = 0
-        sum_n = 0
-        h = (b - a) / n
-        for i in range(1, n):
-            if (i % 3 == 0):
-                sum_mult3 = f(a + i * h)
-            else:
-                sum_n = f(a + i * h)
-
-        Int = (3 * h / 8) * (f(a) + 3 * sum_n + 2 * sum_mult3 + f(b))
-        return Int
-    else:
-        raise ValueError('No se puede calcular la integral por este método. ¡n debe ser un múltiplo de 3!')
-
-class GUI(tk.Tk):
+class AplicacionIntegracion(tk.Tk):
     def __init__(self):
         super().__init__()
         self.title("INTERFAZ PARA INTEGRACIÓN")
@@ -94,6 +54,44 @@ class GUI(tk.Tk):
         self.canvas_widget = self.canvas.get_tk_widget()
         self.canvas_widget.grid(row=0, column=2, rowspan=9, padx=10, pady=10)
 
+    def Trapecio(self, f, a, b, n):
+        h = (b - a) / n
+        S = 0
+        for i in range(1, n):
+            S += f(a + i * h)
+        Int = (h / 2) * (f(a) + 2 * S + f(b))
+        return Int
+
+    def sims13(self, f, a, b, n):
+        if (n % 2 == 0):
+            sum_par = 0
+            sum_imp = 0
+            h = (b - a) / n
+            for i in range(1, n):
+                if (i % 2 == 0):
+                    sum_par = f(a + i * h)
+                else:
+                    sum_imp = f(a + i * h)
+            Int = (h / 3) * (f(a) + 4 * sum_imp + 2 * sum_par + f(b))
+            return Int
+        else:
+            raise ValueError('No se puede calcular la integral por este método. ¡n debe ser un número par!')
+
+    def sims38(self, f, a, b, n):
+        if (n % 3 == 0):
+            sum_mult3 = 0
+            sum_n = 0
+            h = (b - a) / n
+            for i in range(1, n):
+                if (i % 3 == 0):
+                    sum_mult3 = f(a + i * h)
+                else:
+                    sum_n = f(a + i * h)
+            Int = (3 * h / 8) * (f(a) + 3 * sum_n + 2 * sum_mult3 + f(b))
+            return Int
+        else:
+            raise ValueError('No se puede calcular la integral por este método. ¡n debe ser un múltiplo de 3!')
+
     def get_values(self):
         try:
             func_str = self.entry_func.get()
@@ -112,14 +110,13 @@ class GUI(tk.Tk):
             func_str, a, b, n, method = values
             try:
                 f = lambda x: eval(func_str, {"np": np}, {"x": x})
-
                 # Calcular integral
                 if method == "Trapecio":
-                    result = Trapecio(f, a, b, n)
+                    result = self.Trapecio(f, a, b, n)
                 elif method == "Simpson 1/3":
-                    result = sims13(f, a, b, n)
+                    result = self.sims13(f, a, b, n)
                 elif method == "Simpson 3/8":
-                    result = sims38(f, a, b, n)
+                    result = self.sims38(f, a, b, n)
                 else:
                     raise ValueError("Método de integración no válido.")
 
@@ -145,6 +142,5 @@ class GUI(tk.Tk):
                 tk.messagebox.showerror("Error", f"Error al evaluar la función: {e}")
 
 if __name__ == "__main__":
-    app = GUI()
+    app = AplicacionIntegracion()
     app.mainloop()
-

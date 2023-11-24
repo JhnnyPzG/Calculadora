@@ -2,9 +2,9 @@ import tkinter as tk
 from tkinter import ttk
 from Ceros import AplicacionBuscadorRaiz
 from Interpolacion import AplicacionInterpolacion
-from Integracion import GUI
+from Integracion import AplicacionIntegracion
 from Edo1 import AplicacionEDO1
-from Edo2 import main_EDO2
+from Edo2 import AplicacionEDO2
 
 class MenuPrincipal:
     def __init__(self, root):
@@ -43,21 +43,23 @@ class MenuPrincipal:
         app_interpolacion.run()
 
     def abrir_aplicacion_integracion(self):
-        GUI()
+        aplicacion_integracion = AplicacionIntegracion()
+        aplicacion_integracion.run()
 
     def abrir_aplicacion_edo1(self):
         ventana_edo1 = tk.Toplevel(self.root)
         aplicacion_edo1 = AplicacionEDO1(ventana_edo1)
 
     def abrir_aplicacion_edo2(self):
-        main_EDO2()
+        ventana_edo2 = tk.Toplevel(self.root)
+        aplicacion_edo2 = AplicacionEDO2(ventana_edo2)
 
 if __name__ == "__main__":
     root = tk.Tk()
 
     # Configurar el estilo para el fondo azul
     style = ttk.Style(root)
-    style.configure('yellow.TFrame', background='#4a90e2', foreground='white')  # Ajusta el color según tu preferencia
+    style.configure('yellow.TFrame', background='#4a90e2', foreground='white')
 
     app = MenuPrincipal(root)
-    root.mainloop()
+    root.mainloop()   
